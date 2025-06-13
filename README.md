@@ -1,4 +1,4 @@
-# CLY.AI
+# CLY.AI - Multi Featured AI Chatbot (Chat, Lyrics Finder, Youtube Video Summarizer with Link)
 
 CLY.AI is a modern, web-based AI assistant platform featuring chat, lyrics search, and YouTube video summarization. Powered by Gemini AI and built with Django and React-style interactive UI, CLY.AI provides seamless, multi-mode conversations in a sleek, responsive interface.
 
