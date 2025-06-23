@@ -19,9 +19,9 @@ class AIAssistant {
         this.sendBtn = document.getElementById('sendBtn');
         this.clearChatBtn = document.getElementById('clearChat');
         this.themeToggleBtn = document.getElementById('themeToggle');
-        this.charCount = document.querySelector('.char-count');
         this.tabBtns = document.querySelectorAll('.tab-btn');
         this.suggestionCards = document.querySelectorAll('.suggestion-card');
+        // Removed: this.charCount
     }
 
     setupEventListeners() {
@@ -46,10 +46,6 @@ class AIAssistant {
                 e.preventDefault();
                 this.sendMessage();
             }
-        });
-
-        this.chatInput.addEventListener('input', () => {
-            this.updateCharCount();
         });
 
         // Send button
@@ -117,7 +113,6 @@ class AIAssistant {
         this.addMessage(this.chatInput.value, 'user');
         this.conversation.push({ role: 'user', content: this.chatInput.value }); // <-- Add user message to history
         this.chatInput.value = '';
-        this.updateCharCount();
 
         this.showTypingIndicator();
 
@@ -167,12 +162,39 @@ class AIAssistant {
                 }
                 content.innerHTML = this.formatMessage(cleanText);
             }
+
+            // --- Add Copy Button INSIDE the bubble ---
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+            copyBtn.type = 'button';
+            copyBtn.addEventListener('click', () => {
+                const textToCopy = this.currentMode === 'lyrics'
+                    ? content.innerText
+                    : content.textContent;
+                navigator.clipboard.writeText(textToCopy);
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                }, 1200);
+            });
+
+            // Wrap button in a div for alignment
+            const wrapper = document.createElement('div');
+            wrapper.className = 'copy-btn-wrapper';
+            wrapper.appendChild(copyBtn);
+
+            // Add button inside the bubble, at the end
+            content.appendChild(wrapper);
+
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(content);
+            messageDiv.appendChild(wrapper); 
         } else {
             content.innerHTML = this.formatMessage(text);
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(content);
         }
-
-        messageDiv.appendChild(avatar);
-        messageDiv.appendChild(content);
 
         this.chatMessages.appendChild(messageDiv);
         this.scrollToBottom();
@@ -237,17 +259,6 @@ class AIAssistant {
             document.body.removeAttribute('data-theme');
             if (this.themeToggleBtn)
                 this.themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
-        }
-    }
-
-    updateCharCount() {
-        const count = this.chatInput.value.length;
-        this.charCount.textContent = `${count}/2000`;
-
-        if (count > 2000) {
-            this.charCount.style.color = 'var(--accent-primary)';
-        } else {
-            this.charCount.style.color = 'var(--text-secondary)';
         }
     }
 
